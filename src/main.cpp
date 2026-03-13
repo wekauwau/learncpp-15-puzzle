@@ -1,7 +1,10 @@
+#include "Board.hpp"
 #include <iostream>
 
 int main() {
-  std::cout << "Hello world!\n";
+  Board board{};
+  std::cout << board;
+  std::cout << std::boolalpha << board.isSolved() << '\n';
 
   return 0;
 }
