@@ -29,7 +29,7 @@ public:
   Point getEmptyTile() const { return m_emptyTile; }
 
   std::optional<Tile> getTile(const Point& p) const {
-    if (p.row > m_row - 1 || p.col > m_col - 1)
+    if (p.row >= m_row || p.col >= m_col)
       return {};
     return m_tiles[p.row][p.col];
   }
@@ -61,6 +61,8 @@ public:
 
     return true;
   }
+
+  void scramble(int step = 20);
 
 private:
   Array2D<Tile, HEIGHT, WIDTH> m_tiles;
