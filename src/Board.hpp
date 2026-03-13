@@ -7,10 +7,6 @@
 template <typename T, std::size_t ROW, std::size_t COL>
 using Array2D = std::array<std::array<T, COL>, ROW>;
 
-inline constexpr std::size_t boardWidth{4};
-inline constexpr std::size_t boardHeight{4};
-inline constexpr auto boardNumMax{boardHeight * boardWidth};
-
 class Tile {
 public:
   explicit Tile(std::size_t num);
@@ -27,6 +23,10 @@ private:
 
 class Board {
 public:
+  static constexpr std::size_t boardWidth{4};
+  static constexpr std::size_t boardHeight{4};
+  static constexpr auto boardNumMax{boardHeight * boardWidth};
+
   explicit Board() = default;
 
   friend std::ostream& operator<<(std::ostream& out, const Board& b);
@@ -35,6 +35,7 @@ public:
   // bool slide(const Direction& d);
 
 private:
+  static constexpr int s_consoleLines{3};
   // clang-format off
   Array2D<Tile, boardHeight, boardWidth> m_tiles{{
     {{ Tile{1}, Tile{2}, Tile{3}, Tile{4}, }},
@@ -43,6 +44,4 @@ private:
     {{ Tile{13}, Tile{14}, Tile{15}, Tile{0}, }},
   }};
   // clang-format on
-
-  static constexpr int s_consoleLines{3};
 };

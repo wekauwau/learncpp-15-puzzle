@@ -1,7 +1,7 @@
 #include "Board.hpp"
 #include <cassert>
 
-Tile::Tile(std::size_t num) : m_num{num} { assert(num < boardNumMax); }
+Tile::Tile(std::size_t num) : m_num{num} { assert(num < Board::boardNumMax); }
 
 std::ostream& operator<<(std::ostream& out, const Tile& t) {
   out << (t.m_num < 10 ? "  " : " ");
