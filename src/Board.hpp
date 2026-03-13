@@ -2,9 +2,11 @@
 
 // THIS IS SUCH AN ABOMINATION
 
+#include "Point.hpp"
 #include "Tile.hpp"
 #include <array>
 #include <cstddef>
+#include <optional>
 #include <ostream>
 
 template <typename T, std::size_t ROW, std::size_t COL>
@@ -22,6 +24,14 @@ public:
         tile = Tile{++num};
 
     m_tiles[HEIGHT - 1][WIDTH - 1] = Tile{0};
+  }
+
+  Point getEmptyTile() const { return m_emptyTile; }
+
+  std::optional<Tile> getTile(const Point& p) const {
+    if (p.row > m_row - 1 || p.col > m_col - 1)
+      return {};
+    return m_tiles[p.row][p.col];
   }
 
   friend std::ostream& operator<<(std::ostream& out, const Board& o) {
@@ -45,7 +55,7 @@ public:
         if (++expected == m_size)
           return tile.isEmpty();
 
-        if (tile.getNum() != expected)
+        if (tile.num != expected)
           return false;
       }
 
@@ -54,5 +64,8 @@ public:
 
 private:
   Array2D<Tile, HEIGHT, WIDTH> m_tiles;
+  std::size_t m_row{HEIGHT};
+  std::size_t m_col{WIDTH};
   std::size_t m_size{WIDTH * HEIGHT};
+  Point m_emptyTile{HEIGHT - 1, WIDTH - 1};
 };
