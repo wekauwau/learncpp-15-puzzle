@@ -38,8 +38,21 @@ public:
     return out;
   }
 
-  // bool isSolved() const;
+  bool isSolved() const {
+    std::size_t expected{0};
+    for (const auto& row : m_tiles)
+      for (const Tile& tile : row) {
+        if (++expected == m_size)
+          return tile.isEmpty();
+
+        if (tile.getNum() != expected)
+          return false;
+      }
+
+    return true;
+  }
 
 private:
   Array2D<Tile, HEIGHT, WIDTH> m_tiles;
+  std::size_t m_size{WIDTH * HEIGHT};
 };
