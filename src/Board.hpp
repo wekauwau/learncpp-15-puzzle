@@ -1,5 +1,8 @@
 #pragma once
 
+// THIS IS SUCH AN ABOMINATION
+
+#include "Tile.hpp"
 #include <array>
 #include <cstddef>
 #include <ostream>
@@ -7,41 +10,36 @@
 template <typename T, std::size_t ROW, std::size_t COL>
 using Array2D = std::array<std::array<T, COL>, ROW>;
 
-class Tile {
-public:
-  explicit Tile(std::size_t num);
-
-  std::size_t getNum() const { return m_num; }
-
-  friend std::ostream& operator<<(std::ostream& out, const Tile& t);
-
-  bool isEmpty() const { return m_num == 0; }
-
-private:
-  std::size_t m_num{};
-};
-
+template <std::size_t WIDTH, std::size_t HEIGHT>
 class Board {
+  static_assert(WIDTH > 1 && HEIGHT > 1);
+
 public:
-  static constexpr std::size_t boardWidth{4};
-  static constexpr std::size_t boardHeight{4};
-  static constexpr auto boardNumMax{boardHeight * boardWidth};
+  Board() : m_tiles{} {
+    std::size_t num{0};
+    for (auto& row : m_tiles)
+      for (Tile& tile : row)
+        tile = Tile{++num};
 
-  explicit Board() = default;
+    m_tiles[HEIGHT - 1][WIDTH - 1] = Tile{0};
+  }
 
-  friend std::ostream& operator<<(std::ostream& out, const Board& b);
+  friend std::ostream& operator<<(std::ostream& out, const Board& o) {
+    static constexpr int s_consoleLines{3};
+    for (int i{0}; i < s_consoleLines; ++i)
+      out << '\n';
 
-  bool isSolved() const;
-  // bool slide(const Direction& d);
+    for (const auto& row : o.m_tiles) {
+      for (const auto& col : row)
+        out << col;
+      out << '\n';
+    }
+
+    return out;
+  }
+
+  // bool isSolved() const;
 
 private:
-  static constexpr int s_consoleLines{3};
-  // clang-format off
-  Array2D<Tile, boardHeight, boardWidth> m_tiles{{
-    {{ Tile{1}, Tile{2}, Tile{3}, Tile{4}, }},
-    {{ Tile{5}, Tile{6}, Tile{7}, Tile{8}, }},
-    {{ Tile{9}, Tile{10}, Tile{11}, Tile{12}, }},
-    {{ Tile{13}, Tile{14}, Tile{15}, Tile{0}, }},
-  }};
-  // clang-format on
+  Array2D<Tile, HEIGHT, WIDTH> m_tiles;
 };

@@ -2,9 +2,11 @@
 #include <iostream>
 
 int main() {
-  Board board{};
-  std::cout << board;
-  std::cout << std::boolalpha << board.isSolved() << '\n';
+  Board<4, 4> board;
+  std::cout << board << '\n';
+
+  Board<3, 5> hmm;
+  std::cout << hmm << '\n';
 
   return 0;
 }
