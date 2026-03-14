@@ -68,6 +68,11 @@ public:
     return true;
   }
 
+  void shuffle(int n = 1000) {
+    for (int i{0}; i < n; ++i)
+      slide(Direction::random());
+  }
+
   bool slide(Direction d) {
     Point newPoint{m_emptyTile.getAdjacent(-d)};
 
