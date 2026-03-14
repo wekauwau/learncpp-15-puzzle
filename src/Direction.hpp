@@ -15,6 +15,4 @@ struct Direction {
 
 std::ostream& operator<<(std::ostream& out, Direction::Type t);
 
-inline std::ostream& operator<<(std::ostream& out, const Direction& d) {
-  return out << d.direction;
-}
+inline std::ostream& operator<<(std::ostream& out, Direction d) { return out << d.direction; }

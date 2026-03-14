@@ -1,11 +1,18 @@
 #pragma once
 
+// GOD FORSAKEN CODE
+
 #include "Direction.hpp"
 #include "Point.hpp"
 #include "Tile.hpp"
+#include "wekauwau/output.hpp"
 #include <array>
 #include <cstddef>
 #include <ostream>
+
+// For friend
+template <std::size_t WIDTH, std::size_t HEIGHT>
+struct BoardView;
 
 template <typename T, std::size_t ROW, std::size_t COL>
 using Array2D = std::array<std::array<T, COL>, ROW>;
@@ -13,6 +20,7 @@ using Array2D = std::array<std::array<T, COL>, ROW>;
 template <std::size_t WIDTH, std::size_t HEIGHT>
 class Board {
   static_assert(WIDTH > 1 && HEIGHT > 1);
+  friend struct BoardView<WIDTH, HEIGHT>;
 
 public:
   Board() : m_tiles{} {
@@ -24,7 +32,7 @@ public:
     m_tiles[HEIGHT - 1][WIDTH - 1] = Tile{0};
   }
 
-  const Point& getEmptyTile() const { return m_emptyTile; }
+  Point getEmptyTile() const { return m_emptyTile; }
 
   friend std::ostream& operator<<(std::ostream& out, const Board& o) {
     // static constexpr int s_consoleLines{3};
@@ -43,7 +51,7 @@ public:
   bool isSolved() const {
     std::size_t expected{0};
     for (const auto& row : m_tiles)
-      for (const Tile& tile : row) {
+      for (Tile tile : row) {
         if (++expected == m_size)
           return tile.isEmpty();
 
@@ -54,18 +62,20 @@ public:
     return true;
   }
 
-  bool isValidPoint(const Point& p) const {
+  bool isValidPoint(Point p) const {
     if (p.row >= m_row || p.col >= m_col)
       return false;
     return true;
   }
 
-  bool slide(const Direction& d) {
+  bool slide(Direction d) {
     Point newPoint{m_emptyTile.getAdjacent(-d)};
 
     if (isValidPoint(newPoint)) {
       std::swap(m_tiles[m_emptyTile.row][m_emptyTile.col], m_tiles[newPoint.row][newPoint.col]);
+      m_lastMovedTile = m_emptyTile;
       m_emptyTile = newPoint;
+
       return true;
     }
 
@@ -76,7 +86,31 @@ public:
 private:
   Array2D<Tile, HEIGHT, WIDTH> m_tiles;
   Point m_emptyTile{HEIGHT - 1, WIDTH - 1};
+  Point m_lastMovedTile{m_emptyTile};
   std::size_t m_row{HEIGHT};
   std::size_t m_col{WIDTH};
   std::size_t m_size{WIDTH * HEIGHT};
+};
+
+template <std::size_t WIDTH, std::size_t HEIGHT>
+struct BoardView {
+  const Board<WIDTH, HEIGHT>& board;
+
+  friend std::ostream& operator<<(std::ostream& out, BoardView b) {
+    out << '\n';
+
+    for (std::size_t row{0}; row < HEIGHT; ++row) {
+      for (std::size_t col{0}; col < WIDTH; ++col) {
+        Tile tile{b.board.m_tiles[row][col]};
+
+        if (Point{row, col} == b.board.m_lastMovedTile)
+          out << wkw::output::Highlight{static_cast<std::string>(tile)};
+        else
+          out << tile;
+      }
+      out << '\n';
+    }
+
+    return out;
+  }
 };

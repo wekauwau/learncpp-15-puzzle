@@ -1,6 +1,6 @@
 #include "Point.hpp"
 
-Point Point::getAdjacent(const Direction& d) const {
+Point Point::getAdjacent(Direction d) const {
   // Point doesn't have invariants, return it as it is
   switch (d.direction) {
   case Direction::Type::Up:

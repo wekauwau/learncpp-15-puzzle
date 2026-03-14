@@ -23,7 +23,7 @@ int main() {
           for (const auto& direction : dirTest) {
             std::cout << "Sliding " << direction << "...\n";
             if (board.slide(direction))
-              std::cout << board;
+              std::cout << BoardView{board};
             else
               std::cout << "🦍💩  ";
             std::cout << '\n' << "Empty tile is in " << board.getEmptyTile() << '\n';
@@ -35,7 +35,7 @@ int main() {
           for (const auto& direction : dirTest0) {
             std::cout << "Sliding " << direction << "...\n";
             if (board.slide(direction))
-              std::cout << board;
+              std::cout << BoardView{board};
             else
               std::cout << "🦍💩  ";
             std::cout << '\n' << "Empty tile is in " << board.getEmptyTile() << '\n';
