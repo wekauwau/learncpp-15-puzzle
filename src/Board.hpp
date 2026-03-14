@@ -1,12 +1,10 @@
 #pragma once
 
-// THIS IS SUCH AN ABOMINATION
-
+#include "Direction.hpp"
 #include "Point.hpp"
 #include "Tile.hpp"
 #include <array>
 #include <cstddef>
-#include <optional>
 #include <ostream>
 
 template <typename T, std::size_t ROW, std::size_t COL>
@@ -26,18 +24,12 @@ public:
     m_tiles[HEIGHT - 1][WIDTH - 1] = Tile{0};
   }
 
-  Point getEmptyTile() const { return m_emptyTile; }
-
-  std::optional<Tile> getTile(const Point& p) const {
-    if (p.row >= m_row || p.col >= m_col)
-      return {};
-    return m_tiles[p.row][p.col];
-  }
+  const Point& getEmptyTile() const { return m_emptyTile; }
 
   friend std::ostream& operator<<(std::ostream& out, const Board& o) {
-    static constexpr int s_consoleLines{3};
-    for (int i{0}; i < s_consoleLines; ++i)
-      out << '\n';
+    // static constexpr int s_consoleLines{3};
+    // for (int i{0}; i < s_consoleLines; ++i)
+    out << '\n';
 
     for (const auto& row : o.m_tiles) {
       for (const auto& col : row)
@@ -62,12 +54,29 @@ public:
     return true;
   }
 
-  void scramble(int step = 20);
+  bool isValidPoint(const Point& p) const {
+    if (p.row >= m_row || p.col >= m_col)
+      return false;
+    return true;
+  }
+
+  bool slide(const Direction& d) {
+    Point newPoint{m_emptyTile.getAdjacent(-d)};
+
+    if (isValidPoint(newPoint)) {
+      std::swap(m_tiles[m_emptyTile.row][m_emptyTile.col], m_tiles[newPoint.row][newPoint.col]);
+      m_emptyTile = newPoint;
+      return true;
+    }
+
+    return false;
+  }
+  bool slide(Direction::Type t) { return slide(Direction{t}); }
 
 private:
   Array2D<Tile, HEIGHT, WIDTH> m_tiles;
+  Point m_emptyTile{HEIGHT - 1, WIDTH - 1};
   std::size_t m_row{HEIGHT};
   std::size_t m_col{WIDTH};
   std::size_t m_size{WIDTH * HEIGHT};
-  Point m_emptyTile{HEIGHT - 1, WIDTH - 1};
 };
