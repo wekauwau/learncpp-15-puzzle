@@ -1,4 +1,4 @@
-add_executable(tests tile_test.cpp)
+add_executable(tests Tile_test.cpp)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_compile_features(tests PRIVATE cxx_std_26)

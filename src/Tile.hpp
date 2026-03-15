@@ -1,30 +1,20 @@
-#include <cassert>
-#include <compare> // For operator<=>
+#pragma once
+
 #include <format>
 
-class Tile {
-public:
-  using value_type = unsigned int;
+struct Tile {
+  unsigned int num{0};
 
-  explicit constexpr Tile(value_type num = 0) noexcept : num_{num} {}
-
-  [[nodiscard]] constexpr bool isEmpty() const noexcept { return num_ == 0; }
-
-  [[nodiscard]] constexpr value_type value() const noexcept { return num_; }
-
-  auto operator<=>(const Tile&) const = default;
-
-private:
-  value_type num_;
+  [[nodiscard]] constexpr bool isEmpty() const noexcept { return num == 0; }
 };
 
 template <>
 struct std::formatter<Tile> {
   constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
 
-  auto format(const Tile& t, std::format_context& ctx) const {
+  auto format(Tile t, std::format_context& ctx) const {
     if (t.isEmpty())
       return std::format_to(ctx.out(), "    ");
-    return std::format_to(ctx.out(), " {:>2} ", t.value());
+    return std::format_to(ctx.out(), " {:>2} ", t.num);
   }
 };
