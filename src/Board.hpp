@@ -14,9 +14,9 @@ class Board {
     std::size_t height;
     std::size_t size;
 
-    constexpr std::size_t maxColIndex() const noexcept { return width - 1; }
-    constexpr std::size_t maxRowIndex() const noexcept { return height - 1; }
-    constexpr std::size_t maxVal() const noexcept { return size - 1; }
+    std::size_t maxColIndex() const noexcept { return width - 1; }
+    std::size_t maxRowIndex() const noexcept { return height - 1; }
+    std::size_t maxVal() const noexcept { return size - 1; }
   };
 
 public:
@@ -25,7 +25,7 @@ public:
   // Factory
   static std::expected<Board, std::string_view> create(std::size_t width = 4,
                                                        std::size_t height = 4) noexcept;
-  Point getEmptyTile() const { return m_emptyTile; }
+  Point getEmptyTile() const noexcept { return m_emptyTile; }
 
   void print(bool highlight = false) const noexcept;
 
