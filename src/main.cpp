@@ -1,5 +1,4 @@
 #include "Board.hpp"
-#include "Direction.hpp"
 #include <print>
 
 int main() {
@@ -8,21 +7,14 @@ int main() {
     return 1;
 
   Board& board{*result};
+
+  std::println("This board is {}solved", (board.isSolved() ? "" : "not "));
   board.print();
   std::println();
 
-  for (int i{0}; i < 5; ++i) {
-    auto d{Direction::random()};
-    std::println("Slide {}:", d);
-
-    if (board.slide(d)) {
-      board.print(true);
-    } else {
-      std::println("🤡");
-    }
-
-    std::println();
-  }
+  board.shuffle();
+  std::println("This board is {}solved", (board.isSolved() ? "" : "not "));
+  board.print(true);
 
   return 0;
 }

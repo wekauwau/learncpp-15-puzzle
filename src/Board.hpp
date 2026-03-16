@@ -34,8 +34,13 @@ public:
   Point getEmptyTile() const noexcept { return m_emptyTile; }
   Point getLastMovedTile() const noexcept { return m_lastMovedTile; }
 
+  [[nodiscard]] bool isSolved() const noexcept;
   void print(bool highlight = false) const noexcept;
   bool slide(Direction d) noexcept;
+  void shuffle(int n = 1000) {
+    for (int i{0}; i < n; ++i)
+      slide(Direction::random());
+  }
 
 private:
   std::vector<std::vector<Tile>> m_tiles;
@@ -45,7 +50,7 @@ private:
   Board(std::size_t width = 4, std::size_t height = 4);
   Tile& tileAt(Point p) noexcept { return m_tiles[p.row][p.col]; }
 
-  bool inBounds(Point p) const noexcept {
+  [[nodiscard]] bool inBounds(Point p) const noexcept {
     return p.row <= size.maxRowIndex() && p.col <= size.maxColIndex();
   }
 };

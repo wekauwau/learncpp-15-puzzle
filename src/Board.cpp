@@ -9,16 +9,18 @@ std::expected<Board, std::string_view> Board::create(std::size_t width,
   return Board{width, height};
 }
 
-Board::Board(std::size_t width, std::size_t height)
-    : size{width, height, width * height}, m_tiles(height, std::vector<Tile>(width)),
-      m_emptyTile{size.maxRowIndex(), size.maxColIndex()}, m_lastMovedTile{m_emptyTile} {
-  assert(width > 1 && height > 1);
+bool Board::isSolved() const noexcept {
+  std::size_t expected{0};
+  for (const auto& row : m_tiles)
+    for (auto tile : row) {
+      if (++expected == size.size)
+        return tile.isEmpty();
 
-  unsigned int val{0};
-  for (auto& row : m_tiles)
-    for (auto& tile : row)
-      tile = Tile{++val};
-  m_tiles[size.maxRowIndex()][size.maxColIndex()] = Tile{0};
+      if (tile.num != expected)
+        return false;
+    }
+
+  return true;
 }
 
 void Board::print(bool highlight) const noexcept {
@@ -49,4 +51,16 @@ bool Board::slide(Direction d) noexcept {
   }
 
   return false;
+}
+
+Board::Board(std::size_t width, std::size_t height)
+    : size{width, height, width * height}, m_tiles(height, std::vector<Tile>(width)),
+      m_emptyTile{size.maxRowIndex(), size.maxColIndex()}, m_lastMovedTile{m_emptyTile} {
+  assert(width > 1 && height > 1);
+
+  unsigned int val{0};
+  for (auto& row : m_tiles)
+    for (auto& tile : row)
+      tile = Tile{++val};
+  m_tiles[size.maxRowIndex()][size.maxColIndex()] = Tile{0};
 }

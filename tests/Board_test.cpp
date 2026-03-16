@@ -69,3 +69,29 @@ TEST_CASE("5x7 Board", "[Board]") {
   REQUIRE(b.getLastMovedTile() == Point{5, 4});
   REQUIRE(*b[b.getLastMovedTile()] == Tile{29});
 }
+
+TEST_CASE("Win condition and shuffle", "[Board]") {
+  auto result = Board::create();
+  REQUIRE(result);
+  if (!result)
+    return;
+
+  Board& b = *result;
+  REQUIRE(b.isSolved());
+
+  // Anchor the timeline
+  constexpr int n = 1000;
+  std::vector<Direction> moves{};
+  moves.reserve(n);            // avoids reallocation
+  for (int i{0}; i < n; ++i) { // shuffle the board...
+    auto d = Direction::random();
+    if (b.slide(d))
+      moves.push_back(d);
+  }
+  REQUIRE_FALSE(b.isSolved());
+
+  // Going back in time
+  for (auto it = moves.rbegin(); it != moves.rend(); ++it)
+    b.slide(-(*it));
+  REQUIRE(b.isSolved());
+}
