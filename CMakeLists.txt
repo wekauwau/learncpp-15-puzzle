@@ -5,6 +5,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 function(apply_compile_flags target)
+    set(GCC "$<CXX_COMPILER_ID:GNU>")
+    set(CLANG "$<CXX_COMPILER_ID:Clang>")
+    set(REL "$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>")
+
     target_compile_options(
         ${target}
         PRIVATE
@@ -30,20 +34,16 @@ function(apply_compile_flags target)
             -Wmisleading-indentation
             -D_GLIBCXX_DEBUG
             -fno-omit-frame-pointer
-            -fsanitize=address,undefined,leak,pointer-compare,pointer-subtract
             >
-            # Release
+            # Release + RelWithDebInfo
             $<$<CONFIG:Release>:
             -march=native
-            -flto
             -fstack-protector-strong
             -D_FORTIFY_SOURCE=3
             -fno-omit-frame-pointer
             >
-            # RelWithDebInfo
             $<$<CONFIG:RelWithDebInfo>:
             -march=native
-            -flto
             -fstack-protector-strong
             -D_FORTIFY_SOURCE=3
             -fno-omit-frame-pointer
@@ -55,23 +55,36 @@ function(apply_compile_flags target)
             -fstack-protector-strong
             -D_FORTIFY_SOURCE=3
             >
+            # LTO — compiler-specific, release-like configs only
+            $<$<AND:${REL},$<CONFIG:Release>>:>
+            $<$<AND:${REL},${GCC}>:-flto=auto>
+            $<$<AND:${REL},${CLANG}>:-flto=thin>
     )
-
     target_link_options(
         ${target}
         PRIVATE
-            $<$<CONFIG:Debug>:
-            -fsanitize=address,undefined,leak,pointer-compare,pointer-subtract
-            >
-            $<$<CONFIG:Release>:
-            -flto
-            >
-            $<$<CONFIG:RelWithDebInfo>:
-            -flto
-            >
+            $<$<AND:${REL},${GCC}>:-flto=auto>
+            $<$<AND:${REL},${CLANG}>:-flto=thin>
             $<$<CONFIG:MinSizeRel>:
             -Wl,--gc-sections
             >
+    )
+endfunction()
+
+function(apply_sanitizer_flags target)
+    set(GCC "$<CXX_COMPILER_ID:GNU>")
+
+    target_compile_options(
+        ${target}
+        PRIVATE
+            $<$<CONFIG:Debug>:-fsanitize=address,undefined,leak>
+            $<$<AND:$<CONFIG:Debug>,${GCC}>:-fsanitize=pointer-compare,pointer-subtract>
+    )
+    target_link_options(
+        ${target}
+        PRIVATE
+            $<$<CONFIG:Debug>:-fsanitize=address,undefined,leak>
+            $<$<AND:$<CONFIG:Debug>,${GCC}>:-fsanitize=pointer-compare,pointer-subtract>
     )
 endfunction()
 
