@@ -5,7 +5,7 @@ target_sources(
     PUBLIC FILE_SET HEADERS BASE_DIRS ${PROJECT_SOURCE_DIR}/src
 )
 apply_compile_flags(core)
-target_link_libraries(core PRIVATE wekauwau)
+target_link_libraries(core PUBLIC wekauwau)
 
 add_executable(main)
 target_sources(main PRIVATE main.cpp)
