@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Direction.hpp"
 #include "Point.hpp"
 #include "Tile.hpp"
 #include <cassert>
@@ -25,9 +26,16 @@ public:
   // Factory
   static std::expected<Board, std::string_view> create(std::size_t width = 4,
                                                        std::size_t height = 4) noexcept;
+  const Tile* operator[](Point p) const noexcept {
+    if (!inBounds(p))
+      return nullptr;
+    return &m_tiles[p.row][p.col];
+  }
   Point getEmptyTile() const noexcept { return m_emptyTile; }
+  Point getLastMovedTile() const noexcept { return m_lastMovedTile; }
 
   void print(bool highlight = false) const noexcept;
+  bool slide(Direction d) noexcept;
 
 private:
   std::vector<std::vector<Tile>> m_tiles;
@@ -35,6 +43,7 @@ private:
   Point m_lastMovedTile;
 
   Board(std::size_t width = 4, std::size_t height = 4);
+  Tile& tileAt(Point p) noexcept { return m_tiles[p.row][p.col]; }
 
   bool inBounds(Point p) const noexcept {
     return p.row <= size.maxRowIndex() && p.col <= size.maxColIndex();

@@ -1,5 +1,6 @@
 #include "Board.hpp"
 #include <print>
+#include <utility>
 
 std::expected<Board, std::string_view> Board::create(std::size_t width,
                                                      std::size_t height) noexcept {
@@ -36,4 +37,16 @@ void Board::print(bool highlight) const noexcept {
     }
     std::println("");
   }
+}
+
+bool Board::slide(Direction d) noexcept {
+  Point newPoint{m_emptyTile.getAdjacent(-d)};
+  if (inBounds(newPoint)) {
+    std::swap(tileAt(m_emptyTile), tileAt(newPoint));
+    m_lastMovedTile = m_emptyTile;
+    m_emptyTile = newPoint;
+    return true;
+  }
+
+  return false;
 }

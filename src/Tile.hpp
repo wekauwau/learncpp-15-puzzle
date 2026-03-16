@@ -5,6 +5,8 @@
 struct Tile {
   unsigned int num{0};
 
+  constexpr bool operator==(this Tile, Tile) = default;
+
   [[nodiscard]] constexpr bool isEmpty() const noexcept { return num == 0; }
 };
 
