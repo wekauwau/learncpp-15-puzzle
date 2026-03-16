@@ -2,10 +2,10 @@ add_library(core)
 target_sources(
     core
     PRIVATE Board.cpp
-    PUBLIC FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+    PUBLIC FILE_SET HEADERS BASE_DIRS ${PROJECT_SOURCE_DIR}/src
 )
-target_compile_features(core PUBLIC cxx_std_26)
 apply_compile_flags(core)
+target_link_libraries(core PRIVATE wekauwau)
 
 add_executable(main)
 target_sources(main PRIVATE main.cpp)
