@@ -1,20 +1,11 @@
-#include "Board.hpp"
-#include <iostream>
+#include "Direction.hpp"
 #include <print>
 
 int main() {
-  std::size_t width{}, height{};
-  std::print("Enter width and height: ");
-  std::cin >> width >> height;
-
-  auto result = Board::create(width, height);
-  if (!result) {
-    std::println("Error: {}", result.error());
-    return 1;
+  for (int i{0}; i < 5; ++i) {
+    Direction d{Direction::random()};
+    std::println("{} x {}", d, -d);
   }
-
-  Board& board = *result;
-  board.print();
 
   return 0;
 }
